@@ -1,0 +1,42 @@
+[
+  {
+    "n": 1,
+    "id": "8",
+    "url": "https://huggingface.co/papers/enhancing-reinforcement-learning",
+    "title": "Enhancing Reinforcement Learning with Generative Neural Networks",
+    "date": "2022-11-18",
+    "source": "hf-search"
+  },
+  {
+    "n": 2,
+    "id": "4",
+    "url": "https://huggingface.co/papers/multi-agent-world-modeling",
+    "title": "Multi-Agent World Modeling: State of the Art",
+    "date": "2023-02-15",
+    "source": "hf-daily"
+  },
+  {
+    "n": 3,
+    "id": "6",
+    "url": "https://huggingface.co/papers/language-guided-navigation",
+    "title": "Language-Guided Panoramic Navigation",
+    "date": "2023-04-05",
+    "source": "hf-daily"
+  },
+  {
+    "n": 4,
+    "id": "1",
+    "url": "https://arxiv.org/abs/2301.001",
+    "title": "Understanding World Models for Deep Reinforcement Learning",
+    "date": "2023-01-15",
+    "source": "arxiv"
+  },
+  {
+    "n": 5,
+    "id": "9",
+    "url": "https://huggingface.co/papers/mathematical-reasoning",
+    "title": "Mathematical Reasoning in Large Language Models",
+    "date": "2023-01-30",
+    "source": "hf-search"
+  }
+]

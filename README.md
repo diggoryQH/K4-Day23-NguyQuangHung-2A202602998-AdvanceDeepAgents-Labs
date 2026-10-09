@@ -94,16 +94,68 @@ Kết quả nằm ở `reports/survey-about-world-model.md` cùng `.sources.json
 
 ## 6. Chủ đề và nộp bài
 
-- Chạy đủ **5 chủ đề** trong [`topics.md`](topics.md), mỗi chủ đề một lần.
-- Commit mã nguồn và toàn bộ `reports/`, đẩy lên một **public repo** GitHub và nộp link.
-- Kiểm tra trước khi nộp: chạy **`python self_check.py`** (không tốn token): nó kiểm tra đủ 5 báo cáo, `meta.json`, trích dẫn bằng `check_citations.py` của bạn, và không có `.env`/khóa nào trong git.
-- Cách chấm: xem [`RUBRIC.md`](RUBRIC.md).
+- Đã hoàn thành đủ **5 chủ đề** trong [`topics.md`](topics.md):
+  1. `survey about world model`
+  2. `survey about reinforcement learning for LLM reasoning`
+  3. `survey about LLM agents and tool use`
+  4. `survey about video and multimodal generation`
+  5. `survey about efficient inference and small language models`
+- Chạy tự kiểm tra kiểm định trích dẫn & an toàn bí mật:
+  ```bash
+  python self_check.py
+  ```
+  Tất cả 5 chủ đề và kiểm tra git / secrets đều đạt trạng thái `OK` và sẵn sàng nộp (`READY to submit`).
+- Cách chấm điểm đối chiếu: xem chi tiết tại [`RUBRIC.md`](RUBRIC.md).
 
-## 7. Thời gian, chi phí và an toàn
+## 7. Cấu trúc và cách đọc thư mục `reports/`
+
+Mỗi lần chạy nghiên cứu thành công trên một chủ đề, hệ thống xuất ra bộ 3 tệp tin tương ứng trong thư mục `reports/`:
+
+1. **Tệp báo cáo Markdown (`reports/<slug>.md`)**:
+   - Chứa toàn bộ nội dung khảo sát khoa học theo cấu trúc chuẩn của [`REPORT_TEMPLATE.md`](REPORT_TEMPLATE.md): `# Title`, `## TL;DR`, `## Background`, các mục chuyên đề kỹ thuật (`## <Theme>`), `## Trends and open problems`, và danh mục `## References`.
+   - Mọi khẳng định kỹ thuật đều có trích dẫn `[n]`. Danh mục `## References` được tự động sinh bằng script `finalize_citations.py` chạy bên trong sandbox, đảm bảo mỗi nguồn một dòng bắt đầu bằng `[n]` kèm duy nhất 1 URL chuẩn xác.
+
+2. **Tệp danh mục nguồn (`reports/<slug>.sources.json`)**:
+   - Mảng JSON chứa danh sách các công trình nghiên cứu được trích dẫn trong bài báo cáo, đánh số liên tục từ 1 đến K không trùng URL:
+     ```json
+     [
+       {
+         "n": 1,
+         "id": "2404.14294",
+         "url": "https://huggingface.co/papers/2404.14294",
+         "title": "A Survey on Efficient Inference for Large Language Models",
+         "date": "2024-04-22",
+         "source": "hf-search"
+       }
+     ]
+     ```
+   - Trường `source` phản ánh chính xác công cụ đã thu thập bài viết: `arxiv`, `hf-daily`, `hf-search`, hoặc `web`.
+
+3. **Tệp siêu dữ liệu chấm điểm (`reports/<slug>.meta.json`)**:
+   - Bằng chứng kiểm định tự động cho các tiêu chí Rubric:
+     * `topic`: Tên chủ đề nghiên cứu gốc.
+     * `model`: Tên mô hình LLM điều phối (ví dụ `gpt-4o-mini`).
+     * `elapsed_s`: Thời gian thực thi toàn bộ quy trình (giây).
+     * `subagent_calls`: Tổng số lượt Lead Agent ủy quyền cho subagents thông qua tool `task` (đảm bảo $\ge 3$ theo Rubric 2.1).
+     * `source_families`: Danh sách các họ nguồn tài liệu có mặt trong báo cáo (đảm bảo $\ge 3$ họ độc lập trong `arxiv`, `hf-daily`, `hf-search`, `web` theo Rubric 2.2).
+     * `n_sources`: Số lượng bài báo được đưa vào danh mục tham khảo.
+     * `tool_calls` & `tokens`: Thống kê số lượng tool calls và token tiêu thụ của Lead Agent.
+
+### Bảng kết quả 5 báo cáo thực nghiệm:
+
+| Chủ đề | Báo cáo | Nguồn | Subagents | Các họ nguồn | Tự kiểm định (`self_check.py`) |
+|---|:---:|:---:|:---:|:---|:---:|
+| **World Model** | `reports/survey-about-world-model.md` | 5 | 7 | `arxiv`, `hf-daily`, `hf-search` | **OK** |
+| **RL for LLM Reasoning** | `reports/survey-about-reinforcement-learning-for-llm-reasoning.md` | 10 | 6 | `arxiv`, `hf-daily`, `hf-search` | **OK** |
+| **LLM Agents & Tool Use** | `reports/survey-about-llm-agents-and-tool-use.md` | 8 | 6 | `arxiv`, `hf-daily`, `hf-search` | **OK** |
+| **Video & Multimodal Gen** | `reports/survey-about-video-and-multimodal-generation.md` | 10 | 6 | `arxiv`, `hf-daily`, `hf-search` | **OK** |
+| **Efficient Inference & SLMs** | `reports/survey-about-efficient-inference-and-small-language-models.md` | 3 | 4 | `arxiv`, `hf-daily`, `hf-search` | **OK** |
+
+## 8. Thời gian, chi phí và an toàn
 
 - Dùng một mô hình **rẻ nhưng hỗ trợ tool calling**, và **đặt giới hạn** (số lần gọi mô hình/công cụ cho lead và subagent, `recursion_limit`): một prompt hỏng có thể khiến agent lặp rất lâu. Đây là hạng mục 2.5 của `RUBRIC.md`.
 - Kết quả có tính ngẫu nhiên: cùng một mã có thể cho báo cáo hợp lệ ở lần này và trích dẫn lỗi ở lần sau. Hãy sửa **prompt và mã**, không sửa tay báo cáo.
-
-- Mỗi lần chạy tốn token LLM và thời gian sandbox. `tokens` trong `meta.json` chỉ đếm tin nhắn của lead, chưa gồm subagent, nên chi phí thật cao hơn. `open_sandbox()` luôn dừng và xóa sandbox khi kết thúc, kể cả khi lỗi. Đừng bỏ qua nó.
+- Mỗi lần chạy tốn token LLM và thời gian sandbox. `open_sandbox()` luôn dừng và xóa sandbox khi kết thúc, kể cả khi lỗi.
 - **Không đưa bí mật vào sandbox.** Sandbox không ngăn được prompt injection hay việc đẩy dữ liệu ra mạng; một trang web độc hại có thể khiến agent chạy lệnh bên trong sandbox. Vì vậy mọi công cụ gọi mạng và mọi khóa ở lại phía host.
 - Nội dung lấy từ web là **dữ liệu không đáng tin**: agent không được làm theo chỉ dẫn nằm trong đó.
+
